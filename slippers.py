@@ -3,22 +3,22 @@ import time
 from helpers import *
 from datetime import date
 
-def test_run():
 
+def test_run():
+    
+    replay_directory = str(os.sep).join(__file__.split('/')[:-1])
     test_files = [os.path.join(replay_directory, file) 
                 for file in os.listdir(replay_directory) if file.endswith('.slp')]
 
+    decorator = '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ・'
     for test_file in test_files:
-        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ・')
-        fetch_and_print(test_file, quiet=quiet, no_fetch=no_fetch)
+        print(decorator)
+        fetch_and_print(test_file, user_code, quiet=False, no_fetch=no_fetch)
+    print(decorator)
 
 
 def main(directory, quiet=False, testing=False, no_fetch=False):
 
-   
-    # Testing april's games, make a way to optionally select month subfolder
-
-    #user_code = user_code
     most_recent_game = get_most_recent_game(directory)
     most_recent_opponent = fetch_and_print(most_recent_game, user_code,
                                            quiet=True, no_fetch=no_fetch)
@@ -26,11 +26,10 @@ def main(directory, quiet=False, testing=False, no_fetch=False):
         
         os.system("cls" if os.name == "nt" else "clear")
         print(f'~~~~~~~~~ opp.\n{most_recent_opponent}\n~~~~~~~~~\n')
-        s = input('[q] Quit \nPress enter to update... ')
+        s = input(f'\n[q] Quit \nPress enter to update... \n')
 
         if s.lower() == "q":
             return
-
         time.sleep(1)
 
         most_recent_check =  get_most_recent_game(directory)
@@ -50,30 +49,37 @@ if __name__ == "__main__":
     quiet=False
     # provides hardcoded path and user code (mine, can rewrite) and
     # bypasses user prompts to make testing easier 
-    testing=True
+    testing=False
     # skips rank lookups to prevent unnecessary HTMLSession calls
     # to not ddos slippi.gg  while testing
     no_fetch=True
 
     user_code = get_user_code(quiet=quiet, testing=testing)
     replay_directory = set_base_directory(quiet=quiet, testing=testing)
+    # # set_base_directory could be changed to return replay_directory 
+    # # and a base_directory variable (equivalent if using default)
     # # useless flag to keep track of whether we're in the base directory
     # in_base_directory = True
 
+    d = date.today() 
+    year, month = d.year, d.strftime("%m")
+    subfolder = f"{year}-{month}"
     if not testing:
         s = input('Using current month subfolder? Y/N : ')
         if s.lower() == 'y':
-            d = date.today()
             # in_base_directory = False
             # parent_directory = replay_directory 
-            year = d.year
-            month = d.strftime("%m")
-            replay_directory += os.sep + f"{year}-{month}"
+            replay_directory += os.sep + subfolder
     else:
-        replay_directory += os.sep + "2023-04"
-    
+        subfolder = "2023-04"
+        if subfolder in os.listdir(replay_directory):
+            replay_directory +=  os.sep + subfolder
+
+
 
     main(replay_directory, quiet=quiet, testing=testing, no_fetch=no_fetch)
+
+    
     
 
 # # Write modes for displaying a custom amount of .slp's 
