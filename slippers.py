@@ -52,7 +52,7 @@ if __name__ == "__main__":
     testing=False
     # skips rank lookups to prevent unnecessary HTMLSession calls
     # to not ddos slippi.gg  while testing
-    no_fetch=True
+    no_fetch=False
 
     user_code = get_user_code(quiet=quiet, testing=testing)
     replay_directory = set_base_directory(quiet=quiet, testing=testing)
@@ -71,16 +71,11 @@ if __name__ == "__main__":
             # parent_directory = replay_directory 
             replay_directory += os.sep + subfolder
     else:
-        subfolder = "2023-04"
         if subfolder in os.listdir(replay_directory):
             replay_directory +=  os.sep + subfolder
 
-
-
     main(replay_directory, quiet=quiet, testing=testing, no_fetch=no_fetch)
 
-    
-    
 
 # # Write modes for displaying a custom amount of .slp's 
 # # ie, maybe we only want the ranks from the past session, or maybe we want
